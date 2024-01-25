@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 5000
 
@@ -56,6 +56,15 @@ app.get('/services', async (req, res) => {
 })
 
 
+app.get('/service/:id', async (req, res) => {
+    const id = req.params.id
+    const query = {_id : new ObjectId(id)}
+    const service = await totalServices.findOne(query)
+
+    res.send(service)
+})
+
+
 
 // get all blogs
 
@@ -63,6 +72,17 @@ app.get('/blogs', async (req, res) => {
     const blogs = await totalBlog.find().toArray()
     res.send(blogs)
 })
+
+
+app.get('/blog/:id', async (req, res) => {
+  const id = req.params.id
+  const query = {_id : new ObjectId(id)}
+  const blog = await totalBlog.findOne(query)
+
+  res.send(blog)
+})
+
+
 
 
 
