@@ -100,53 +100,29 @@ app.patch("/notification/:email", async (req, res) => {
   res.send(result);
 });
 
-// all services api is here
-
-// app.get("/services", async (req, res) => {
-//   const { trainer, category, duration, title, sortOrder } = req.query;
-
-//   const queryFilters = {};
-//   if (title) {
-//     queryFilters.title = { $regex: title, $options: "i" };
-//   }
-
-//   if (category) {
-//     queryFilters.category = category;
-//   }
-//   if (trainer) {
-//     queryFilters.trainer = trainer;
-//   }
-
-//   if (duration) {
-//     const [min, max] = duration.split("-");
-//     queryFilters.duration = { $gte: parseInt(min), $lte: parseInt(max) };
-//   }
-//   console.log("Query Filters:", queryFilters);
-//   try {
-//     const results = await totalServices
-//       .find(queryFilters)
-//       .sort({ price: sortOrder === "asc" ? 1 : -1 });
-//     console.log("Results:", results);
-//     res.json(results);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Internal Server Error");
-//   }
-
-//   // const services = await totalServices.find().toArray()
-//   // res.send(services)
-// });
+//get all  the service
 
 app.get("/servicesAll", async (req, res) => {
+  //get the query
   const filter = req.query;
-
+  
   const query = {
+    //search by trainers name and title ..Here use or for both of them and options for case-insensitive
     $or: [
-      { title: { $regex: filter.search, $options: "i" } },
-      { trainer: { $regex: filter.search, $options: "i" } },
+      { title: { $regex: filter.search || "", $options: "i" } },
+      { trainer: { $regex: filter.search || "", $options: "i" } },
     ],
   };
+  // Include category filter if available
+  if (filter.category) {
+    query.category = filter.category;
+  }
+  // if(filter.duration){
+  //   const [min, max] = filter.duration.split("-");//[5,10]
+  //   query.duration = { $gte: parseInt(min), $lte: parseInt(max)};
+  // }
 
+  //sort for price category
   const options = {
     sort: {
       price: filter.sort === "asc" ? 1 : -1,
