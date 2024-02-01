@@ -102,40 +102,40 @@ app.patch("/notification/:email", async (req, res) => {
 
 // all services api is here
 
-app.get("/services", async (req, res) => {
-  const { trainer, category, duration, title, sortOrder } = req.query;
+// app.get("/services", async (req, res) => {
+//   const { trainer, category, duration, title, sortOrder } = req.query;
 
-  const queryFilters = {};
-  if (title) {
-    queryFilters.title = { $regex: title, $options: "i" };
-  }
+//   const queryFilters = {};
+//   if (title) {
+//     queryFilters.title = { $regex: title, $options: "i" };
+//   }
 
-  if (category) {
-    queryFilters.category = category;
-  }
-  if (trainer) {
-    queryFilters.trainer = trainer;
-  }
+//   if (category) {
+//     queryFilters.category = category;
+//   }
+//   if (trainer) {
+//     queryFilters.trainer = trainer;
+//   }
 
-  if (duration) {
-    const [min, max] = duration.split("-");
-    queryFilters.duration = { $gte: parseInt(min), $lte: parseInt(max) };
-  }
-  console.log("Query Filters:", queryFilters);
-  try {
-    const results = await totalServices
-      .find(queryFilters)
-      .sort({ price: sortOrder === "asc" ? 1 : -1 });
-    console.log("Results:", results);
-    res.json(results);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
+//   if (duration) {
+//     const [min, max] = duration.split("-");
+//     queryFilters.duration = { $gte: parseInt(min), $lte: parseInt(max) };
+//   }
+//   console.log("Query Filters:", queryFilters);
+//   try {
+//     const results = await totalServices
+//       .find(queryFilters)
+//       .sort({ price: sortOrder === "asc" ? 1 : -1 });
+//     console.log("Results:", results);
+//     res.json(results);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send("Internal Server Error");
+//   }
 
-  // const services = await totalServices.find().toArray()
-  // res.send(services)
-});
+//   // const services = await totalServices.find().toArray()
+//   // res.send(services)
+// });
 
 app.get("/servicesAll", async (req, res) => {
   const filter = req.query;
