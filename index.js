@@ -56,7 +56,7 @@ const totalEvents = client.db('revive').collection('events')
 
 
 
-// all users crud operation is here ------
+// all users crud operation is here ------------
 
 // new user post api 
 app.post('/users', async(req, res) => {
@@ -79,8 +79,15 @@ app.get('/users', async(req, res) => {
 
 // get all trainers 
 app.get('/trainers', async(req, res) => {
-  const trainers = await totalTrainers.find().toArray()
-  res.send(trainers)
+
+  if(req.query?.id){
+    const query = {_id : new ObjectId(req.query.id)}
+    const trainer = await totalTrainers.findOne(query)
+    res.send(trainer)
+  } else {
+    const trainers = await totalTrainers.find().toArray()
+    res.send(trainers)
+  }
 })
 
 
@@ -91,8 +98,18 @@ app.get('/trainers', async(req, res) => {
 
 // get all events 
 app.get('/events', async(req, res) => {
-  const events = await totalEvents.find().toArray()
-  res.send(events)
+
+  if(req.query?.id){
+    // get single event data 
+    const query = {_id : new ObjectId(req.query.id)}
+    const event = await totalEvents.findOne(query)
+    res.send(event)
+
+  } else {
+    // get all event data 
+    const events = await totalEvents.find().toArray()
+    res.send(events)
+  }
 })
 
 
@@ -130,7 +147,7 @@ app.get('/services', async (req, res) => {
     res.send(services)
 })
 
-
+// get single service 
 app.get('/service/:id', async (req, res) => {
     const id = req.params.id
     const query = {_id : new ObjectId(id)}
@@ -141,20 +158,21 @@ app.get('/service/:id', async (req, res) => {
 
 
 
-// get all blogs
+
+// get all blogs----------------------------------
 
 app.get('/blogs', async (req, res) => {
-    const blogs = await totalBlog.find().toArray()
-    res.send(blogs)
-})
 
-
-app.get('/blog/:id', async (req, res) => {
-  const id = req.params.id
-  const query = {_id : new ObjectId(id)}
-  const blog = await totalBlog.findOne(query)
-
-  res.send(blog)
+    if(req.query?.id){
+      // get single blog by id 
+      const query = {_id : new ObjectId(req.query.id)}
+      const blogs = await totalBlog.findOne(query)
+      res.send(blogs)
+    } else {
+      // get all blogs 
+      const blogs = await totalBlog.find().toArray()
+      res.send(blogs)
+    }
 })
 
 
