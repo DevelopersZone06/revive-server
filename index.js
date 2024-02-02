@@ -100,6 +100,13 @@ app.patch("/notification/:email", async (req, res) => {
   res.send(result);
 });
 
+app.get('/notification/:email',async(req,res)=>{
+  const email=req.params.email;
+  const query={email:email}
+  const notifications=await totalNotification.findOne(query);
+  res.send(notifications)
+})
+
 //get all  the service
 
 app.get("/servicesAll", async (req, res) => {
