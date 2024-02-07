@@ -44,6 +44,7 @@ const totalTrainers = client.db("revive").collection("trainers");
 const totalUser = client.db("revive").collection("users");
 const totalNotification = client.db("revive").collection("notification");
 const totalEvents = client.db("revive").collection("events");
+const adminCollection=client.db('revive').collection('admin')
 
 // all crud operation is here ---------------------------
 
@@ -240,6 +241,14 @@ app.get("/blog/:id", async (req, res) => {
 
   res.send(blog);
 });
+
+
+
+// admin api
+app.get('/admin',async(req,res)=>{
+  const result=await adminCollection.find().toArray()
+  res.send(result)
+})
 
 app.get("/", (req, res) => {
   res.send("Revive server is running");
