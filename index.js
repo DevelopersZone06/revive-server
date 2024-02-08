@@ -52,7 +52,6 @@ const adminCollection=client.db('revive').collection('admin')
 
 
 // all users crud operation is here ------------
-// all users crud operation is here ------
 
 // new user post api
 app.post("/users", async (req, res) => {
@@ -61,11 +60,15 @@ app.post("/users", async (req, res) => {
   res.send(result);
 });
 
+
 // get all user api
 app.get("/users", async (req, res) => {
   const users = await totalUser.find().toArray();
   res.send(users);
 });
+
+
+
 
 // all trainers crud operation is here -------------------
 
@@ -103,19 +106,9 @@ app.get('/events', async(req, res) => {
     res.send(events)
   }
 })
-// get all trainers
-app.get("/trainers", async (req, res) => {
-  const trainers = await totalTrainers.find().toArray();
-  res.send(trainers);
-});
 
-// all events crud operation is here ---------------
 
-// get all events
-app.get("/events", async (req, res) => {
-  const events = await totalEvents.find().toArray();
-  res.send(events);
-});
+
 
 // new notification post operation
 
@@ -145,6 +138,9 @@ app.get('/notification/:email',async(req,res)=>{
   const notifications=await totalNotification.findOne(query);
   res.send(notifications)
 })
+
+
+
 
 //get all  the service
 
@@ -195,13 +191,7 @@ app.get('/service/:id', async (req, res) => {
     res.send(service)
 })
 
-app.get("/service/:id", async (req, res) => {
-  const id = req.params.id;
-  const query = { _id: new ObjectId(id) };
-  const service = await totalServices.findOne(query);
 
-  res.send(service);
-});
 
 
 // get all blogs----------------------------------
@@ -223,32 +213,18 @@ app.get('/blogs', async (req, res) => {
 
 
 
-
-
-
-app.get('/', (req, res) => {
-    res.send('Revive server is running')
-})
-app.get("/blogs", async (req, res) => {
-  const blogs = await totalBlog.find().toArray();
-  res.send(blogs);
-});
-
-app.get("/blog/:id", async (req, res) => {
-  const id = req.params.id;
-  const query = { _id: new ObjectId(id) };
-  const blog = await totalBlog.findOne(query);
-
-  res.send(blog);
-});
-
-
-
 // admin api
 app.get('/admin',async(req,res)=>{
   const result=await adminCollection.find().toArray()
   res.send(result)
 })
+
+
+
+
+
+
+
 
 app.get("/", (req, res) => {
   res.send("Revive server is running");
