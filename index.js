@@ -44,7 +44,9 @@ const totalTrainers = client.db("revive").collection("trainers");
 const totalUser = client.db("revive").collection("users");
 const totalNotification = client.db("revive").collection("notification");
 const totalEvents = client.db("revive").collection("events");
-const adminCollection=client.db('revive').collection('admin')
+const adminCollection=client.db('revive').collection('admin');
+const galleryCollection=client.db('revive').collection('gallery')
+const commentCollection=client.db('revive').collection('comments')
 
 // all crud operation is here ---------------------------
 
@@ -66,6 +68,16 @@ app.get("/users", async (req, res) => {
   const users = await totalUser.find().toArray();
   res.send(users);
 });
+
+
+
+// all gallery getting api
+
+app.get("/gallery", async (req, res) => {
+  const gallery = await galleryCollection.find().toArray();
+  res.send(gallery);
+});
+
 
 
 
@@ -221,6 +233,60 @@ app.get('/admin',async(req,res)=>{
 
 
 
+// all comment and like operation is here --------------------------
+
+// comment post operation 
+app.patch("/comments/:id", async (req, res) => {
+  const id = req.params.id;
+  const comment = req.body.commentIs;
+
+  const result = await commentCollection.updateOne(
+    { _id: id },
+    {
+      $setOnInsert: { _id: id, likes: [] },
+      $push: {
+        allComment: {
+          $each: [comment],
+          $position: 0,
+        },
+      },
+    },
+    { upsert: true }
+  );
+  res.send(result);
+});
+
+
+// like post operation 
+app.patch("/like/:id", async (req, res) => {
+  const id = req.params.id;
+  const like = req.body.name;
+
+  const result = await commentCollection.updateOne(
+    { _id: id },
+    {
+      $setOnInsert: { _id: id, allComment: [] },
+      $push: {
+        likes: {
+          $each: [like],
+          $position: 0,
+        },
+      },
+    },
+    { upsert: true }
+  );
+  res.send(result);
+});
+
+
+// comment get operation 
+
+app.get("/comment/:id", async(req, res) => {
+  const id = req.params.id
+  const query = {_id : id}
+  const comments = await commentCollection.findOne(query)
+  res.send(comments)
+})
 
 
 
