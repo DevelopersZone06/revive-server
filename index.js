@@ -44,7 +44,8 @@ const totalTrainers = client.db("revive").collection("trainers");
 const totalUser = client.db("revive").collection("users");
 const totalNotification = client.db("revive").collection("notification");
 const totalEvents = client.db("revive").collection("events");
-const adminCollection=client.db('revive').collection('admin')
+const adminCollection=client.db('revive').collection('admin');
+const galleryCollection=client.db('revive').collection('gallery')
 
 // all crud operation is here ---------------------------
 
@@ -61,6 +62,13 @@ app.post("/users", async (req, res) => {
 app.get("/users", async (req, res) => {
   const users = await totalUser.find().toArray();
   res.send(users);
+});
+
+// all gallery getting api
+
+app.get("/gallery", async (req, res) => {
+  const gallery = await galleryCollection.find().toArray();
+  res.send(gallery);
 });
 
 // all trainers crud operation is here -------------------
