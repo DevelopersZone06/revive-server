@@ -46,10 +46,14 @@ const totalNotification = client.db("revive").collection("notification");
 const totalEvents = client.db("revive").collection("events");
 const adminCollection=client.db('revive').collection('admin');
 const galleryCollection=client.db('revive').collection('gallery')
+const commentCollection=client.db('revive').collection('comments')
 
 // all crud operation is here ---------------------------
 
-// all users crud operation is here ------
+
+
+
+// all users crud operation is here ------------
 
 // new user post api
 app.post("/users", async (req, res) => {
@@ -58,11 +62,14 @@ app.post("/users", async (req, res) => {
   res.send(result);
 });
 
+
 // get all user api
 app.get("/users", async (req, res) => {
   const users = await totalUser.find().toArray();
   res.send(users);
 });
+
+
 
 // all gallery getting api
 
@@ -71,21 +78,49 @@ app.get("/gallery", async (req, res) => {
   res.send(gallery);
 });
 
+
+
+
+
 // all trainers crud operation is here -------------------
 
-// get all trainers
-app.get("/trainers", async (req, res) => {
-  const trainers = await totalTrainers.find().toArray();
-  res.send(trainers);
-});
+// get all trainers 
+app.get('/trainers', async(req, res) => {
+
+  if(req.query?.id){
+    const query = {_id : new ObjectId(req.query.id)}
+    const trainer = await totalTrainers.findOne(query)
+    res.send(trainer)
+  } else {
+    const trainers = await totalTrainers.find().toArray()
+    res.send(trainers)
+  }
+})
+
+
+
+
 
 // all events crud operation is here ---------------
 
-// get all events
-app.get("/events", async (req, res) => {
-  const events = await totalEvents.find().toArray();
-  res.send(events);
-});
+// get all events 
+app.get('/events', async(req, res) => {
+
+  if(req.query?.id){
+    // get single event data 
+    const query = {_id : new ObjectId(req.query.id)}
+    const event = await totalEvents.findOne(query)
+    res.send(event)
+
+  } else {
+    // get all event data 
+    const events = await totalEvents.find().toArray()
+    res.send(events)
+  }
+})
+
+
+
 
 // new notification post operation
 
@@ -115,6 +150,9 @@ app.get('/notification/:email',async(req,res)=>{
   const notifications=await totalNotification.findOne(query);
   res.send(notifications)
 })
+
+
+
 
 //get all  the service
 
@@ -149,28 +187,41 @@ app.get("/servicesAll", async (req, res) => {
   res.send(services);
 });
 
-app.get("/service/:id", async (req, res) => {
-  const id = req.params.id;
-  const query = { _id: new ObjectId(id) };
-  const service = await totalServices.findOne(query);
+// all services api is here
 
-  res.send(service);
-});
+app.get('/services', async (req, res) => {
+    const services = await totalServices.find().toArray()
+    res.send(services)
+})
 
-// get all blogs
+// get single service 
+app.get('/service/:id', async (req, res) => {
+    const id = req.params.id
+    const query = {_id : new ObjectId(id)}
+    const service = await totalServices.findOne(query)
 
-app.get("/blogs", async (req, res) => {
-  const blogs = await totalBlog.find().toArray();
-  res.send(blogs);
-});
+    res.send(service)
+})
 
-app.get("/blog/:id", async (req, res) => {
-  const id = req.params.id;
-  const query = { _id: new ObjectId(id) };
-  const blog = await totalBlog.findOne(query);
 
-  res.send(blog);
-});
+
+
+// get all blogs----------------------------------
+
+app.get('/blogs', async (req, res) => {
+
+    if(req.query?.id){
+      // get single blog by id 
+      const query = {_id : new ObjectId(req.query.id)}
+      const blogs = await totalBlog.findOne(query)
+      res.send(blogs)
+    } else {
+      // get all blogs 
+      const blogs = await totalBlog.find().toArray()
+      res.send(blogs)
+    }
+})
+
 
 
 
@@ -179,6 +230,67 @@ app.get('/admin',async(req,res)=>{
   const result=await adminCollection.find().toArray()
   res.send(result)
 })
+
+
+
+// all comment and like operation is here --------------------------
+
+// comment post operation 
+app.patch("/comments/:id", async (req, res) => {
+  const id = req.params.id;
+  const comment = req.body.commentIs;
+
+  const result = await commentCollection.updateOne(
+    { _id: id },
+    {
+      $setOnInsert: { _id: id, likes: [] },
+      $push: {
+        allComment: {
+          $each: [comment],
+          $position: 0,
+        },
+      },
+    },
+    { upsert: true }
+  );
+  res.send(result);
+});
+
+
+// like post operation 
+app.patch("/like/:id", async (req, res) => {
+  const id = req.params.id;
+  const like = req.body.name;
+
+  const result = await commentCollection.updateOne(
+    { _id: id },
+    {
+      $setOnInsert: { _id: id, allComment: [] },
+      $push: {
+        likes: {
+          $each: [like],
+          $position: 0,
+        },
+      },
+    },
+    { upsert: true }
+  );
+  res.send(result);
+});
+
+
+// comment get operation 
+
+app.get("/comment/:id", async(req, res) => {
+  const id = req.params.id
+  const query = {_id : id}
+  const comments = await commentCollection.findOne(query)
+  res.send(comments)
+})
+
+
+
+
 
 app.get("/", (req, res) => {
   res.send("Revive server is running");
