@@ -47,6 +47,7 @@ const totalEvents = client.db("revive").collection("events");
 const adminCollection=client.db('revive').collection('admin');
 const galleryCollection=client.db('revive').collection('gallery')
 const commentCollection=client.db('revive').collection('comments')
+const ordersCollection=client.db('revive').collection('orders')
 
 // all crud operation is here ---------------------------
 
@@ -78,7 +79,11 @@ app.get("/gallery", async (req, res) => {
   res.send(gallery);
 });
 
-
+// all orders api (get)
+app.get("/orders", async (req, res) => {
+  const gallery = await ordersCollection.find().toArray();
+  res.send(gallery);
+});
 
 
 
