@@ -77,10 +77,19 @@ app.get('/pendingServices', async (req, res) => {
 
 // new user post api
 app.post("/users", async (req, res) => {
-  const user = req.body;
-  const result = await totalUser.insertOne(user);
-  res.send(result);
-});
+  // const user = req.body;
+  // const result = await totalUser.insertOne(user);
+  // res.send(result);
+  const user=req.body;
+  const query={email:user.email};
+  const existingUser=await totalUser.findOne(query);
+  if(existingUser){
+    return res.send({message:'User already added',insertedId:null})
+  }
+  const result=await totalUser.insertOne(user)
+  res.send(result)
+})
+
 
 
 
