@@ -83,6 +83,8 @@ app.post("/users", async (req, res) => {
 });
 
 
+
+
 // get all user api
 app.get("/users", async (req, res) => {
   const users = await totalUser.find().toArray();
@@ -98,7 +100,11 @@ app.get("/gallery", async (req, res) => {
   res.send(gallery);
 });
 
-
+// all orders api (get)
+app.get("/orders", async (req, res) => {
+  const gallery = await ordersCollection.find().toArray();
+  res.send(gallery);
+});
 
 
 
@@ -187,14 +193,20 @@ app.get("/servicesAll", async (req, res) => {
       { trainer: { $regex: filter.search || "", $options: "i" } },
     ],
   };
-  // Include category filter if available
-  if (filter.category) {
+  // Include category and duration  filter if available
+  
+
+  if (filter.category && filter.duration) {
+    const [min, max] = filter.duration.split("-");
+    query.category = filter.category;
+    query.duration = { $gte: parseInt(min), $lte: parseInt(max)};
+  } else if (filter.duration) {
+    const [min, max] = filter.duration.split("-");
+    query.duration = { $gte: parseInt(min), $lte: parseInt(max)};
+  } else if (filter.category) {
     query.category = filter.category;
   }
-  // if(filter.duration){
-  //   const [min, max] = filter.duration.split("-");//[5,10]
-  //   query.duration = { $gte: parseInt(min), $lte: parseInt(max)};
-  // }
+
 
   //sort for price category
   const options = {
