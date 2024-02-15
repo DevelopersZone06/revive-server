@@ -47,11 +47,30 @@ const totalEvents = client.db("revive").collection("events");
 const adminCollection=client.db('revive').collection('admin');
 const galleryCollection=client.db('revive').collection('gallery')
 const commentCollection=client.db('revive').collection('comments')
-const ordersCollection=client.db('revive').collection('orders')
+const appliedTrainerCollection = client.db('revive').collection('appliedTrainers')
+const pendingServicesCollection = client.db('revive').collection('pendingServices')
 
 // all crud operation is here ---------------------------
 
 
+
+// applied trainer operation here -----------------
+
+// get all applied trainers 
+app.get('/appliedTrainer', async (req, res) => {
+  const result = await appliedTrainerCollection.find().toArray()
+  res.send(result)
+})
+
+
+
+// apply service and pending service operation is here --------------------
+
+// get all pending service 
+app.get('/pendingServices', async (req, res) => {
+  const result = await pendingServicesCollection.find().toArray()
+  res.send(result)
+})
 
 
 // all users crud operation is here ------------
@@ -79,11 +98,7 @@ app.get("/gallery", async (req, res) => {
   res.send(gallery);
 });
 
-// all orders api (get)
-app.get("/orders", async (req, res) => {
-  const gallery = await ordersCollection.find().toArray();
-  res.send(gallery);
-});
+
 
 
 
@@ -222,7 +237,31 @@ app.get('/blogs', async (req, res) => {
       res.send(blogs)
     } else {
       // get all blogs 
-      const blogs = await totalBlog.find().toArray()
+      const trainer = req.query.trainer
+      const category = req.query.category
+      const date = req.query.date
+      const sort = req.query.sort
+      
+      
+      let query = {}
+
+      if(trainer && category && date){
+        query = {author : trainer, category : category, date : date}
+      } else if (trainer && category) {
+        query = {author: trainer, category: category}
+      } else if (trainer && date) {
+        query = {author: trainer , date: date}
+      } else if(category && date) {
+        query = {category: category, date: date}
+      } else if (trainer) {
+        query = {author: trainer}
+      } else if (category) {
+        query = {category: category}
+      } else if (date) {
+        query = {date: date}
+        console.log(date)
+      }
+      const blogs = await totalBlog.find(query).toArray()
       res.send(blogs)
     }
 })
