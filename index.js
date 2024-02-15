@@ -64,6 +64,8 @@ app.post("/users", async (req, res) => {
 });
 
 
+
+
 // get all user api
 app.get("/users", async (req, res) => {
   const users = await totalUser.find().toArray();
