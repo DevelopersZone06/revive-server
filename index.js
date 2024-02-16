@@ -62,6 +62,13 @@ app.get('/appliedTrainer', async (req, res) => {
   res.send(result)
 })
 
+// post applied trainer 
+app.post('/appliedTrainer', async (req, res) => {
+  const trainer = req.body 
+  const result = await appliedTrainerCollection.insertOne(trainer)
+  res.send(result)
+})
+
 
 
 // apply service and pending service operation is here --------------------
@@ -69,6 +76,13 @@ app.get('/appliedTrainer', async (req, res) => {
 // get all pending service 
 app.get('/pendingServices', async (req, res) => {
   const result = await pendingServicesCollection.find().toArray()
+  res.send(result)
+})
+
+// post pending service 
+app.post('/pendingServices', async (req, res) => {
+  const service = req.body 
+  const result = await pendingServicesCollection.insertOne(service)
   res.send(result)
 })
 
@@ -91,12 +105,19 @@ app.get("/users", async (req, res) => {
 
 
 
-// all gallery getting api
+// all gallery getting api---------------------------------
 
 app.get("/gallery", async (req, res) => {
   const gallery = await galleryCollection.find().toArray();
   res.send(gallery);
 });
+
+// gallery post 
+app.post("/gallery", async (req, res) => {
+  const image = req.body 
+  const result = await galleryCollection.insertOne(image)
+  res.send(result)
+})
 
 
 
@@ -115,6 +136,13 @@ app.get('/trainers', async(req, res) => {
     const trainers = await totalTrainers.find().toArray()
     res.send(trainers)
   }
+})
+
+// trainer post operation 
+app.post('/trainers', async (req, res) => {
+  const trainer = req.body
+  const result = await totalTrainers.insertOne(trainer)
+  res.send(result)
 })
 
 
@@ -137,6 +165,12 @@ app.get('/events', async(req, res) => {
     const events = await totalEvents.find().toArray()
     res.send(events)
   }
+})
+
+app.post('/events', async (req, res) => {
+  const event = req.body
+  const result = await totalEvents.insertOne(event)
+  res.send(result)
 })
 
 
@@ -264,6 +298,13 @@ app.get('/blogs', async (req, res) => {
       const blogs = await totalBlog.find(query).toArray()
       res.send(blogs)
     }
+})
+
+// post blog 
+app.post('/blogs', async (req, res) => {
+  const blog = req.body
+  const result = await totalBlog.insertOne(blog)
+  res.send(result)
 })
 
 
