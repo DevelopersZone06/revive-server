@@ -91,10 +91,21 @@ app.post('/pendingServices', async (req, res) => {
 
 // new user post api
 app.post("/users", async (req, res) => {
-  const user = req.body;
-  const result = await totalUser.insertOne(user);
-  res.send(result);
-});
+  // const user = req.body;
+  // const result = await totalUser.insertOne(user);
+  // res.send(result);
+  const user=req.body;
+  const query={email:user.email};
+  const existingUser=await totalUser.findOne(query);
+  if(existingUser){
+    return res.send({message:'User already added',insertedId:null})
+  }
+  const result=await totalUser.insertOne(user)
+  res.send(result)
+})
+
+
+
 
 
 // get all user api
@@ -120,6 +131,11 @@ app.post("/gallery", async (req, res) => {
 })
 
 
+// all orders api (get)
+app.get("/orders", async (req, res) => {
+  const gallery = await ordersCollection.find().toArray();
+  res.send(gallery);
+});
 
 
 
@@ -221,14 +237,20 @@ app.get("/servicesAll", async (req, res) => {
       { trainer: { $regex: filter.search || "", $options: "i" } },
     ],
   };
-  // Include category filter if available
-  if (filter.category) {
+  // Include category and duration  filter if available
+  
+
+  if (filter.category && filter.duration) {
+    const [min, max] = filter.duration.split("-");
+    query.category = filter.category;
+    query.duration = { $gte: parseInt(min), $lte: parseInt(max)};
+  } else if (filter.duration) {
+    const [min, max] = filter.duration.split("-");
+    query.duration = { $gte: parseInt(min), $lte: parseInt(max)};
+  } else if (filter.category) {
     query.category = filter.category;
   }
-  // if(filter.duration){
-  //   const [min, max] = filter.duration.split("-");//[5,10]
-  //   query.duration = { $gte: parseInt(min), $lte: parseInt(max)};
-  // }
+
 
   //sort for price category
   const options = {
