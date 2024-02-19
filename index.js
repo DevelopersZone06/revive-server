@@ -1,14 +1,21 @@
 const express = require('express')
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const app = express()
-const port = process.env.PORT || 5000
+const http = require('http');
+const { Server } = require("socket.io");
+
+const app = express();
+const port = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
 
 
-// middleware is here
-app.use(cors())
-app.use(express.json())
 
+// server.listen(5000, () => {
+//   console.log("Server Running" )
+// })
 
 
 
